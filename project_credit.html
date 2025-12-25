@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 企业信贷风险预测系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 全局深色变量 --- */
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            line-height: 1.8;
+        }
+
+        /* 粒子背景 */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+
+        /* 顶部导航 */
+        .nav-bar {
+            background: rgba(15,23,42,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn {
+            text-decoration: none; color: var(--text-main);
+            font-weight: 600; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+        }
+        .back-btn:hover { color: var(--primary); }
+
+        /* 主容器 */
+        .article-container {
+            max-width: 1000px;
+            margin: 100px auto 60px;
+            padding: 3rem;
+            background: var(--glass-bg); /* 半透明深色背景 */
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* 头部 */
+        .header-section { margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; }
+        h1 { font-size: 2rem; margin: 0 0 1rem 0; color: #fff; }
+        .meta-tags { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-muted); }
+        .tag { background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.8rem; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+        /* 内容通用 */
+        h2 { 
+            margin-top: 3rem; margin-bottom: 1.2rem; font-size: 1.5rem; color: #fff;
+            display: flex; align-items: center; border-left: 5px solid var(--primary); padding-left: 15px;
+        }
+        h3 { font-size: 1.2rem; margin-top: 2rem; color: #e2e8f0; font-weight: 700; }
+        p { margin-bottom: 1.2rem; color: var(--text-muted); text-align: justify; }
+
+        /* 图片布局 */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 2rem 0;
+        }
+        @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr; } }
+
+        .gallery-item {
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            overflow: hidden; background: rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover { transform: translateY(-3px); border-color: var(--primary); }
+
+        .img-wrapper {
+            width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; padding: 10px;
+        }
+        .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .gallery-caption {
+            padding: 12px; background: rgba(0,0,0,0.3); color: var(--text-muted); font-size: 0.85rem; text-align: center; border-top: 1px solid var(--glass-border);
+        }
+
+        .full-width-container {
+            width: 100%; border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px;
+            background: rgba(255,255,255,0.05); margin: 1.5rem 0;
+        }
+        .full-width-img { width: 100%; height: auto; border-radius: 4px; display: block;}
+        .img-note { text-align: center; font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 2rem; margin-top: 0.5rem;}
+
+        /* 代码块 */
+        pre { border-radius: 8px; margin: 1.5rem 0; background: #1e293b !important; }
+
+        .footer { text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="nav-bar">
+        <a href="projects.html" class="back-btn"><i class="fas fa-chevron-left"></i> 返回项目列表</a>
+        <div style="display:flex; gap:20px; font-size:0.9rem;">
+            <a href="index.html" style="color:var(--text-muted); text-decoration:none;">主页</a>
+            <a href="awards.html" style="color:var(--text-muted); text-decoration:none;">荣誉</a>
+        </div>
+    </nav>
+
+    <div class="article-container">
+        
+        <div class="header-section">
+            <h1>基于加权融合模型的企业信贷风险预测分析</h1>
+            <div class="meta-tags">
+                <span class="tag"><i class="fas fa-trophy"></i> 国家级一等奖</span>
+                <span>🏆 海豚杯数智应用大赛</span>
+                <span>👤 角色：团队负责人 & 算法核心</span>
+            </div>
+        </div>
+
+        <h2>1. 业务背景与技术路线</h2>
+        <p>本项目旨在解决传统银行信贷风控中“数据高维稀疏、正负样本极度不平衡”的痛点。我们提出了一套端到端的智能风控解决方案，从数据治理到最终的业务决策。</p>
+        
+        <div class="full-width-container">
+            <img src="images/技术路线图.png" alt="技术路线" class="full-width-img">
+        </div>
+        <div class="img-note">图1：项目整体技术架构与流程设计</div>
+
+        <h2>2. 数据探索性分析 (EDA)</h2>
+        <p>通过对预测结果的可视化分析，我们验证了模型对正负样本（违约/非违约）的区分能力。从概率分布可以看出，正负样本在空间上具有明显的分离度。</p>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/概率密度分布直方图.jpg" class="gallery-img" alt="分布直方图">
+                </div>
+                <div class="gallery-caption">样本预测概率分布直方图</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/模型预测结果的类别分布（饼图）.jpg" class="gallery-img" alt="饼图">
+                </div>
+                <div class="gallery-caption">预测结果类别占比</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/按类别着色的预测概率散点图.jpg" class="gallery-img" alt="散点图">
+                </div>
+                <div class="gallery-caption">按类别着色的概率散点图</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/概率的密度热力图.png" class="gallery-img" alt="热力图">
+                </div>
+                <div class="gallery-caption">概率密度热力图</div>
+            </div>
+        </div>
+
+        <h2>3. 核心算法：Optuna 加权融合</h2>
+        <p>为了突破单一模型的性能瓶颈，我们提出了<strong>多模型加权融合框架</strong>。选取了 LightGBM、CatBoost、XGBoost 等基模型，通过 <strong>Optuna</strong> 贝叶斯优化算法自动搜索各模型的最佳权重。</p>
+
+        <pre><code class="language-python">
+# 核心融合逻辑伪代码
+import optuna
+import numpy as np
+
+def fusion_objective(trial):
+    # 1. 搜索 5 个模型的原始权重参数 alpha
+    weights = [trial.suggest_float(f'w_{i}', 0, 10) for i in range(5)]
+    
+    # 2. Softmax 归一化：确保权重之和为 1
+    exp_w = np.exp(weights)
+    softmax_w = exp_w / np.sum(exp_w)
+    
+    # 3. 加权求和得到最终概率
+    final_pred = np.zeros_like(y_val)
+    for i, model_pred in enumerate(base_model_preds):
+        final_pred += softmax_w[i] * model_pred
+        
+    # 4. 优化目标：最大化 AUC 或 综合评分
+    return roc_auc_score(y_val, final_pred)
+        </code></pre>
+
+        <h2>4. 实验结果与性能评估</h2>
+        <p>融合模型在测试集上表现优异，显著降低了误判率。箱线图和小提琴图进一步展示了模型在不同类别上的预测稳定性，CDF 图验证了模型良好的排序能力。</p>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/箱线图.png" class="gallery-img" alt="箱线图">
+                </div>
+                <div class="gallery-caption">预测概率分布箱线图 (Box Plot)</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/小提琴图.png" class="gallery-img" alt="小提琴图">
+                </div>
+                <div class="gallery-caption">预测概率分布小提琴图 (Violin Plot)</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/累积分布函数.jpg" class="gallery-img" alt="CDF">
+                </div>
+                <div class="gallery-caption">累积分布函数 (CDF)</div>
+            </div>
+            <div class="gallery-item">
+                <div class="img-wrapper">
+                    <img src="images/Q-Q图.jpg" class="gallery-img" alt="QQ图">
+                </div>
+                <div class="gallery-caption">Q-Q 图 (正态性检验)</div>
+            </div>
+        </div>
+
+        <h2>5. 业务决策支持体系</h2>
+        <p>模型不仅仅是预测工具，更是决策依据。我们构建了覆盖<strong>贷前审批、贷中监控、贷后管理</strong>的全流程风控策略，根据预测评分自动分流客户。</p>
+
+        <div class="full-width-container">
+            <img src="images/审批决策.png" class="full-width-img" alt="审批决策流程">
+        </div>
+        <div class="img-note">图10：基于预测评分的贷前/贷中/贷后全流程决策体系</div>
+
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Meng Xiangrui | Data Science Portfolio
+    </div>
+
+    <script>
+        // 粒子背景
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, p = [];
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        class P { constructor() { this.x = Math.random() * w; this.y = Math.random() * h; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > w) this.vx *= -1; if (this.y < 0 || this.y > h) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill(); } }
+        for (let i = 0; i < 80; i++) p.push(new P());
+        function anim() { ctx.clearRect(0, 0, w, h); p.forEach(a => { a.update(); a.draw(); }); requestAnimationFrame(anim); }
+        anim();
+    </script>
+</body>
+</html>

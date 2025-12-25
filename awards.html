@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>荣誉殿堂 - 孟祥瑞 | Honor Wall</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ============================ */
+        /* 🎨 全局变量与基础样式 */
+        /* ============================ */
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --accent-gold: #fbbf24;
+            --accent-silver: #94a3b8;
+            --accent-bronze: #d97706;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            background: var(--bg-deep); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            line-height: 1.6; 
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+
+        /* 导航栏 */
+        .nav-bar {
+            padding: 1.5rem 2rem; position: fixed; width: 100%; top: 0;
+            background: rgba(15,23,42,0.8); backdrop-filter: blur(20px); 
+            z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-link {
+            font-size: 1.2rem; font-weight: 800; color: var(--primary); 
+            text-decoration: none; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* 顶部菜单链接样式 */
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+            position: relative; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a.active { color: var(--primary); font-weight: 700; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--primary); transition: width 0.3s;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* 头部区域 */
+        .header-section { text-align: center; padding: 8rem 2rem 3rem; }
+        .main-title { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 30px rgba(56,189,248,0.5); animation: titleGlow 3s ease-in-out infinite alternate; }
+        .sub-title { color: var(--text-muted); max-width: 700px; margin: 0 auto; font-size: 1.1rem; }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px rgba(56,189,248,0.4); }
+            to { text-shadow: 0 0 40px rgba(56,189,248,0.7), 0 0 10px rgba(255,255,255,0.3); }
+        }
+
+        /* 容器 */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem 4rem; }
+        
+        /* 分区标题 */
+        .section-title {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 1.8rem; font-weight: 700; color: #fff;
+            margin: 4rem 0 2rem; border-left: 5px solid var(--primary); padding-left: 15px;
+        }
+        .section-title i { opacity: 0.9; filter: drop-shadow(0 0 5px currentColor); }
+
+        /* 网格系统 */
+        .honor-grid {
+            display: grid; gap: 24px; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        .honor-grid.national {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+
+        /* 卡片样式 */
+        .honor-card {
+            background: var(--glass-bg);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            position: relative;
+            overflow: hidden; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 0 0 1px var(--glass-border), 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            --mouse-x: 50%; --mouse-y: 50%; --spotlight-color: rgba(56, 189, 248, 0.6);
+        }
+        .honor-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: inset 0 0 0 1px var(--glass-border), 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .honor-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit; padding: 1.5px;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+        }
+        .honor-card:hover::before { opacity: 1; }
+
+        .honor-card.gold-card {
+            background: linear-gradient(145deg, rgba(251, 191, 36, 0.15), rgba(30, 41, 59, 0.6));
+            box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.3), 0 4px 20px rgba(0,0,0,0.2);
+            --spotlight-color: rgba(251, 191, 36, 0.8);
+        }
+
+        .card-year { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.8rem; display: block; letter-spacing: 1px; opacity: 0.8; }
+        .card-title { font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.5; margin-bottom: 1.5rem; min-height: 3.2em; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+        .badge {
+            padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition:all 0.3s;
+        }
+        .honor-card:hover .badge { box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: translateY(-2px); }
+        
+        .badge.rank-1 { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1)); border: 1px solid rgba(251, 191, 36, 0.5); color: var(--accent-gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        .badge.rank-2 { background: linear-gradient(135deg, rgba(148, 163, 184, 0.2), rgba(148, 163, 184, 0.1)); border: 1px solid rgba(148, 163, 184, 0.5); color: #cbd5e1; }
+        .badge.rank-3 { background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(217, 119, 6, 0.1)); border: 1px solid rgba(217, 119, 6, 0.5); color: #fb923c; }
+        .badge.national-tag { background: linear-gradient(135deg, #fbbf24, #d97706); color: #000; border: none; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+
+        footer { text-align: center; padding: 3rem; color: var(--text-muted); border-top: 1px solid var(--glass-border); margin-top: 4rem; }
+
+        .fade-in-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        .honor-grid .honor-card:nth-child(2) { transition-delay: 0.1s; }
+        .honor-grid .honor-card:nth-child(3) { transition-delay: 0.2s; }
+        .honor-grid .honor-card:nth-child(4) { transition-delay: 0.3s; }
+
+        /* ============================ */
+        /* 🎵 音乐播放器 */
+        /* ============================ */
+        .music-player {
+            position: fixed; 
+            bottom: 30px; 
+            left: 30px; 
+            z-index: 1000;
+            display: flex; align-items: center; gap: 15px;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px);
+            padding: 10px; border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .music-player:hover { border-color: var(--primary); transform: scale(1.05); }
+
+        .music-disc {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: url('https://cdn-icons-png.flaticon.com/512/109/109197.png') no-repeat center center / cover;
+            animation: rotateDisc 5s linear infinite;
+            animation-play-state: paused;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+        .music-disc.playing { animation-play-state: running; }
+
+        @keyframes rotateDisc { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .music-controls { display: flex; flex-direction: column; justify-content: center; margin-right: 10px; }
+        .music-title { font-size: 0.85rem; font-weight: 700; color: #fff; white-space: nowrap; }
+        .music-status { font-size: 0.7rem; color: var(--primary); }
+
+        .play-btn {
+            background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;
+            transition: color 0.3s; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+        }
+        .play-btn:hover { color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .header-section { padding-top: 6rem; }
+            .main-title { font-size: 2.2rem; }
+            .honor-grid { grid-template-columns: 1fr; }
+            .music-player { bottom: 20px; left: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <audio id="bg-music" loop>
+        <source src="music/邓小白 - 最美的期待 (钢琴独奏版) [mqms].mp3" type="audio/mp3">
+        您的浏览器不支持 audio 标签。
+    </audio>
+
+    <div class="music-player">
+        <div class="music-disc" id="music-disc"></div>
+        <div class="music-controls">
+            <span class="music-title">最美的期待 (Piano)</span>
+            <span class="music-status" id="music-status">点击播放</span>
+        </div>
+        <button class="play-btn" id="play-btn"><i class="fas fa-play"></i></button>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="logo-link">MXR.Honor</a>
+        <div class="nav-links">
+            <a href="index.html">主页</a>
+            <a href="projects.html">项目集</a>
+            <a href="awards.html" class="active">荣誉殿堂</a>
+            <a href="profile.html">综合素质</a>
+            <a href="gallery.html">个人风采</a>
+        </div>
+    </nav>
+
+    <div class="header-section fade-in-up">
+        <h1 class="main-title">荣誉殿堂</h1>
+        <p class="sub-title">凡心所向，素履以往。入学以来累计获得 <strong>30余项</strong> 国家级及省市校级荣誉。</p>
+    </div>
+
+    <div class="container">
+
+        <div class="section-title fade-in-up" style="color: var(--accent-gold); border-color: var(--accent-gold);">
+            <i class="fas fa-crown"></i> 国家级荣誉 (National Level)
+        </div>
+        
+        <div class="honor-grid national js-tilt-container">
+            
+            <div class="honor-card gold-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">全国大学生海豚杯数智应用创新大赛总决赛</h3>
+                <div class="card-footer">
+                    <span class="badge national-tag"><i class="fas fa-trophy"></i> 国家级一等奖</span>
+                </div>
+            </div>
+
+            <div class="honor-card gold-card fade-in-up">
+                <span class="card-year">2024-2025</span>
+                <h3 class="card-title">国家励志奖学金</h3>
+                <div class="card-footer">
+                    <span class="badge national-tag"><i class="fas fa-certificate"></i> 教育部颁发</span>
+                </div>
+            </div>
+
+            <div class="honor-card gold-card fade-in-up">
+                <span class="card-year">2024</span>
+                <h3 class="card-title">第十一届全国大学生物理实验竞赛（创新）</h3>
+                <div class="card-footer">
+                    <span class="badge rank-3" style="border-color:rgba(255,255,255,0.3); color:#fff; background: rgba(255,255,255,0.1);"><i class="fas fa-medal"></i> 国家级三等奖</span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="section-title fade-in-up">
+            <i class="fas fa-chess-knight"></i> 省级竞技 (Provincial Level)
+        </div>
+
+        <div class="honor-grid js-tilt-container">
+            
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2024</span>
+                <h3 class="card-title">第十七届挑战杯辽宁省大学生课外学术科技作品竞赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等学校华为ICT大赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省第四届大学生企业云服务开发者大赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等院校智慧农业创新创业大赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第四届辽宁省“中软国际--卓越杯”大数据挑战赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等学校大学生大数据应用与分析大赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第四届辽宁省大学生智能技术应用大赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-star"></i> 省级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省三维数字化创新设计大赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等学校大学生移动应用开发大赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第五届辽宁省大学生“iTeach”数字化教育应用创新大赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第六届辽宁省“中软国际--卓越杯”AI挑战赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+             <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第四届辽宁省大学生智能技术应用大赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省第六届智能制造科普创意创新大赛</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-award"></i> 省级二等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第十一届全国大学生统计建模大赛辽宁赛区选拔赛</h3>
+                <div class="card-footer"><span class="badge rank-3"><i class="fas fa-thumbs-up"></i> 省级三等奖</span></div>
+            </div>
+             <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第六届辽宁省“中软国际--卓越杯”AI挑战赛</h3>
+                <div class="card-footer"><span class="badge rank-3"><i class="fas fa-thumbs-up"></i> 省级三等奖</span></div>
+            </div>
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">“枫叶优体”杯辽宁省大学生创意项目大赛</h3>
+                <div class="card-footer"><span class="badge rank-3"><i class="fas fa-thumbs-up"></i> 省级三等奖</span></div>
+            </div>
+
+        </div>
+
+
+        <div class="section-title fade-in-up" style="color: #6ee7b7; border-color: #6ee7b7;">
+            <i class="fas fa-school"></i> 校级表彰 (School Level)
+        </div>
+
+        <div class="honor-grid js-tilt-container">
+            
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2024-2025</span>
+                <h3 class="card-title">大连海洋大学校级二等奖学金</h3>
+                <div class="card-footer"><span class="badge rank-1" style="color:#6ee7b7; border-color:#6ee7b7; background:rgba(110,231,183,0.1);"><i class="fas fa-graduation-cap"></i> 奖学金</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2024-2025</span>
+                <h3 class="card-title">大连海洋大学优秀学生干部</h3>
+                <div class="card-footer"><span class="badge rank-1" style="color:#6ee7b7; border-color:#6ee7b7; background:rgba(110,231,183,0.1);"><i class="fas fa-user-tie"></i> 荣誉称号</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2024-2025</span>
+                <h3 class="card-title">大连海洋大学三好学生</h3>
+                <div class="card-footer"><span class="badge rank-1" style="color:#6ee7b7; border-color:#6ee7b7; background:rgba(110,231,183,0.1);"><i class="fas fa-user-graduate"></i> 荣誉称号</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">中国国际大学生创新大赛（校赛）</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-check-circle"></i> 校级一等奖</span></div>
+            </div>
+            
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">全国大学生统计建模大赛-校赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-check-circle"></i> 校级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第十一届国际大学生智能农业装备创新大赛校赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-check-circle"></i> 校级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等学校本科大学生智慧农业创新创业大赛（校赛）</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-check-circle"></i> 校级一等奖</span></div>
+            </div>
+
+             <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">第四届辽宁省大学生智能技术应用大赛--校级赛</h3>
+                <div class="card-footer"><span class="badge rank-1"><i class="fas fa-check-circle"></i> 校级一等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省普通高等学校本科大学生智慧农业创新创业大赛（校赛）</h3>
+                <div class="card-footer"><span class="badge rank-2"><i class="fas fa-check-circle"></i> 校级二等奖</span></div>
+            </div>
+
+            <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">辽宁省大学生智慧海洋科技创新大赛校赛</h3>
+                <div class="card-footer"><span class="badge rank-3"><i class="fas fa-check-circle"></i> 校级三等奖</span></div>
+            </div>
+             <div class="honor-card fade-in-up">
+                <span class="card-year">2025</span>
+                <h3 class="card-title">“奥凯杯”第十一届国际大学生智能农业装备创新大赛校赛</h3>
+                <div class="card-footer"><span class="badge rank-3"><i class="fas fa-check-circle"></i> 校级三等奖</span></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2025 Meng Xiangrui. Dalian Ocean University.</p>
+    </footer>
+
+    <script>
+        // 1. 粒子背景
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const particles = [];
+
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width; this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.x = (this.x + width) % width;
+                this.y = (this.y + height) % height;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill();
+            }
+        }
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 2. 滚动显现动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => { entry.target.classList.add('visible'); }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-up').forEach(item => observer.observe(item));
+
+        // 3. 鼠标跟随聚光灯效果
+        document.querySelectorAll('.js-tilt-container').forEach(container => {
+            container.addEventListener('mousemove', (e) => {
+                const cards = container.querySelectorAll('.honor-card');
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        });
+
+        // 4. 🎵 音乐播放控制逻辑
+        const music = document.getElementById('bg-music');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = playBtn.querySelector('i');
+        const disc = document.getElementById('music-disc');
+        const statusText = document.getElementById('music-status');
+
+        function togglePlay() {
+            if (music.paused) {
+                music.play();
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+                disc.classList.add('playing');
+                statusText.innerText = '正在播放...';
+            } else {
+                music.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+                disc.classList.remove('playing');
+                statusText.innerText = '已暂停';
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+
+        window.addEventListener('load', () => {
+             // 自动尝试播放
+             music.play().then(() => {
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+                disc.classList.add('playing');
+                statusText.innerText = '正在播放...';
+             }).catch(error => {
+                 console.log("Auto-play prevented.");
+             });
+        });
+    </script>
+</body>
+</html>

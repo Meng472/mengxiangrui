@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目演示 - 牛顿环虚拟仿真实验平台</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            line-height: 1.8;
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+
+        .nav-bar {
+            background: rgba(15,23,42,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { text-decoration: none; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: color 0.3s; }
+        .back-btn:hover { color: var(--primary); }
+
+        .article-container {
+            max-width: 900px; margin: 100px auto 60px; padding: 2rem;
+            background: var(--glass-bg); border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header-section { border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: 2rem; margin: 0 0 1rem 0; color: #fff; }
+        .meta-tags { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-muted); }
+        .tag { background: rgba(110, 231, 183, 0.2); color: #6ee7b7; padding: 4px 12px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(110, 231, 183, 0.3); }
+
+        .video-wrapper {
+            width: 100%; background: #000; border-radius: var(--radius); overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); margin-bottom: 1rem; position: relative;
+            aspect-ratio: 16 / 9; display: flex; justify-content: center; align-items: center;
+            border: 1px solid var(--glass-border);
+        }
+        video { width: 100%; height: 100%; object-fit: contain; }
+
+        h2 { 
+            margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.4rem; color: #fff;
+            display: flex; align-items: center; border-left: 5px solid var(--primary); padding-left: 15px;
+        }
+        h3 { font-size: 1.1rem; margin-top: 1.5rem; color: #e2e8f0; font-weight: 700; }
+        p, li { color: var(--text-muted); }
+        ul { padding-left: 1.5rem; }
+
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .tech-card {
+            background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; text-align: center;
+            border: 1px solid var(--glass-border); font-weight: 600; color: #fff;
+            transition: transform 0.2s;
+        }
+        .tech-card:hover { transform: translateY(-3px); border-color: var(--primary); color: var(--primary); }
+
+        .footer { text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--glass-border); padding-top: 2rem; }
+        
+        pre { background: #1e293b !important; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="nav-bar">
+        <a href="projects.html" class="back-btn"><i class="fas fa-chevron-left"></i> 返回项目列表</a>
+        <div style="display:flex; gap:20px; font-size:0.9rem;">
+            <a href="index.html" style="color:var(--text-muted); text-decoration:none;">主页</a>
+            <a href="awards.html" style="color:var(--text-muted); text-decoration:none;">荣誉</a>
+        </div>
+    </nav>
+
+    <div class="article-container">
+        
+        <div class="header-section">
+            <h1>基于 Web 的牛顿环曲率测量虚拟仿真实验平台</h1>
+            <div class="meta-tags">
+                <span class="tag"><i class="fas fa-medal"></i> 国家级三等奖</span>
+                <span>📅 2024.10 - 2024.12</span>
+                <span>👤 角色：前端开发负责人</span>
+            </div>
+        </div>
+
+        <div class="video-wrapper">
+            <video controls poster="https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop">
+                <source src="videos/视频1.mov" type="video/mp4">
+                您的浏览器不支持 Video 标签，请升级浏览器。
+            </video>
+        </div>
+
+        <div style="text-align:center; font-size:0.9rem; color:var(--text-muted); margin-bottom:3rem;">
+            👆 点击播放：查看 3D 实验操作与动态干涉演示
+        </div>
+
+        <h2>1. 项目简介</h2>
+        <p>为了解决传统物理实验受时空限制、器材易损耗等问题，本项目开发了一个高精度的<strong>Web虚拟仿真实验平台</strong>。用户可以直接在浏览器中模拟牛顿环实验的全过程，包括调节显微镜、读取数据、观察干涉条纹变化等。</p>
+
+        <h2>2. 核心技术栈</h2>
+        <div class="tech-grid">
+            <div class="tech-card">Vue.js</div>
+            <div class="tech-card">Three.js (WebGL)</div>
+            <div class="tech-card">Canvas API</div>
+            <div class="tech-card">Coze AI Agent</div>
+        </div>
+
+        <h2>3. 关键功能实现</h2>
+        
+        <h3>3.1 动态干涉条纹渲染 (Canvas)</h3>
+        <p>利用 HTML5 Canvas API，根据光程差公式实时计算像素点的亮度。实现了当用户调节“透镜曲率”或“光波长”时，干涉条纹能够毫秒级响应并发生扩散或收缩。</p>
+        <pre><code class="language-javascript">
+// 核心算法片段：计算干涉光强
+function calculateIntensity(r, R, lambda) {
+    // r: 半径, R: 曲率半径, lambda: 波长
+    const delta = (r * r) / R; // 光程差近似
+    const phase = (2 * Math.PI * delta) / lambda;
+    return Math.cos(phase / 2) ** 2; // 归一化光强
+}
+        </code></pre>
+
+        <h3>3.2 3D 实验器材仿真 (Three.js)</h3>
+        <p>使用 Three.js 加载读数显微镜、钠光灯等模型的 GLTF 文件，并添加 PBR 材质以还原真实的金属质感。通过 Raycaster 实现鼠标点击交互，让用户可以像在实验室一样“旋转旋钮”。</p>
+
+        <h3>3.3 智能助教系统</h3>
+        <p>接入 Coze AI 智能体，当学生操作步骤错误或数据偏差过大时，AI 会自动弹出提示进行纠正，实现了个性化的实验辅导。</p>
+
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Meng Xiangrui | Built with Three.js & Passion
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, p = [];
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        class P { constructor() { this.x = Math.random() * w; this.y = Math.random() * h; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > w) this.vx *= -1; if (this.y < 0 || this.y > h) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill(); } }
+        for (let i = 0; i < 80; i++) p.push(new P());
+        function animate() {
+            ctx.clearRect(0, 0, w, h); p.forEach(a => { a.update(); a.draw(); }); requestAnimationFrame(anim); }
+        anim();
+    </script>
+</body>
+</html>

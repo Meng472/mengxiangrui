@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 水下多模态分割模型</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            line-height: 1.8;
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+
+        .nav-bar {
+            background: rgba(15,23,42,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { text-decoration: none; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: color 0.3s; }
+        .back-btn:hover { color: var(--primary); }
+
+        .article-container {
+            max-width: 860px; margin: 100px auto 60px; padding: 3rem;
+            background: var(--glass-bg); border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header-section { border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        h1 { font-size: 2.2rem; margin: 0 0 1rem 0; color: #fff; }
+        .meta-tags { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-muted); }
+        .tag { background: rgba(165, 180, 252, 0.2); color: #a5b4fc; padding: 4px 12px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(165, 180, 252, 0.3); }
+
+        h2 { 
+            margin-top: 3rem; margin-bottom: 1.2rem; font-size: 1.5rem; color: #fff;
+            display: flex; align-items: center; border-left: 5px solid var(--primary); padding-left: 15px;
+        }
+        h3 { font-size: 1.2rem; margin-top: 1.5rem; color: #e2e8f0; font-weight: 700; }
+        p, ul { color: var(--text-muted); text-align: justify; }
+        li { margin-bottom: 0.5rem; }
+
+        .content-img {
+            width: 100%; border-radius: var(--radius); border: 1px solid var(--glass-border);
+            margin: 2rem 0 1rem 0; transition: transform 0.3s;
+        }
+        .content-img:hover { transform: scale(1.01); }
+        .img-caption { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; font-style: italic; }
+
+        pre { border-radius: 8px; margin: 1.5rem 0; background: #1e293b !important; }
+
+        .footer { text-align: center; margin-top: 4rem; color: var(--text-muted); border-top: 1px solid var(--glass-border); padding-top: 2rem; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="nav-bar">
+        <a href="projects.html" class="back-btn"><i class="fas fa-chevron-left"></i> 返回项目列表</a>
+        <div style="display:flex; gap:20px; font-size:0.9rem;">
+            <a href="index.html" style="color:var(--text-muted); text-decoration:none;">主页</a>
+            <a href="awards.html" style="color:var(--text-muted); text-decoration:none;">荣誉</a>
+        </div>
+    </nav>
+
+    <div class="article-container">
+        
+        <div class="header-section">
+            <h1>基于多模态融合的水下生物目标分割系统</h1>
+            <div class="meta-tags">
+                <span class="tag"><i class="fas fa-medal"></i> 省级一等奖</span>
+                <span>🏆 卓越杯大数据挑战赛</span>
+                <span>📅 2025.04 - 2025.06</span>
+                <span>👤 角色：算法架构 / 团队负责人</span>
+            </div>
+        </div>
+
+        <h2>1. 项目背景与痛点</h2>
+        <p>在水下复杂的生态监测场景中，传统的光学图像（RGB）往往受限于光线衰减和水体浑浊，导致生物目标边缘模糊。虽然引入深度图（Depth）或光流图（Flow）可以补充三维结构信息，但在实际工程中面临两大核心痛点：</p>
+        <ul>
+            <li><strong>多模态设计低效：</strong> 传统的双流网络往往需要为不同模态重复设计特征提取框架，参数冗余大。</li>
+            <li><strong>模态缺失问题：</strong> 水下传感器容易故障，模型需要具备在单一模态失效时仍能保持鲁棒性的能力。</li>
+        </ul>
+
+        <img src="images/p1.jpg" alt="整体架构图" class="content-img">
+        <div class="img-caption">图1：模型整体算法架构示意图 (RGB+Depth 双流输入 + DFF 模块)</div>
+
+        <h2>2. 核心解决方案</h2>
+
+        <h3>2.1 RGB + Depth/Flow 双输入架构</h3>
+        <p>为了充分利用多模态信息，我们设计了一种非对称的双流架构：</p>
+        <ul>
+            <li><strong>RGB 分支：</strong> 采用 <strong>SAM (Segment Anything Model) Encoder</strong> 作为主干网络，利用其强大的零样本泛化能力提取高层语义特征。</li>
+            <li><strong>辅助分支：</strong> 引入轻量级的 <strong>Repvit</strong> 网络提取深度图（Depth）或光流图（Flow）的特征，捕捉空间位置与运动边缘信息。</li>
+        </ul>
+
+        <h3>2.2 DFF 动态特征融合 (Dynamic Feature Fusion)</h3>
+        <p>这是本项目的核心创新点。我们在解码器阶段引入了 DFF 模块，通过自适应注意力机制，动态计算不同模态特征的权重。当某一模态质量较差时，网络会自动降低其权重。</p>
+
+        <pre><code class="language-python">
+import torch
+import torch.nn as nn
+
+class DFF_Module(nn.Module):
+    """
+    Dynamic Feature Fusion Module (核心代码示意)
+    动态融合 RGB 特征与 Depth/Flow 特征
+    """
+    def __init__(self, channels):
+        super().__init__()
+        self.global_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channels * 2, channels // 4),
+            nn.ReLU(),
+            nn.Linear(channels // 4, 2), # 生成两个模态的权重
+            nn.Softmax(dim=1)
+        )
+
+    def forward(self, f_rgb, f_depth):
+        f_cat = torch.cat([f_rgb, f_depth], dim=1) # 特征拼接
+        
+        # 计算自适应权重 (Attention)
+        b, c, _, _ = f_rgb.shape
+        weights = self.fc(self.global_pool(f_cat).view(b, -1))
+        w_rgb, w_depth = weights[:, 0], weights[:, 1]
+        
+        # 加权融合
+        f_out = w_rgb.view(b, 1, 1, 1) * f_rgb + w_depth.view(b, 1, 1, 1) * f_depth
+        return f_out
+        </code></pre>
+
+        <h3>2.3 模型轻量化与推理加速</h3>
+        <p>针对水下设备算力有限的问题，我们移除了原始 SAM 模型中计算量巨大的 HEM 模块，并对 Decoder 进行了剪枝优化。最终模型在保持 mIoU 仅下降 0.5% 的前提下，推理速度提升了 <strong>40%</strong>。</p>
+
+        <h2>3. 实验结果与分析</h2>
+        <p>我们在公开的水下生物数据集（如 SUIM）上进行了测试。结果显示，该方法在应对“传感器数据丢失”等极端情况时，表现显著优于传统的 UNet 和 DeepLabV3+。</p>
+        
+        <img src="images/p2.jpg" alt="分割效果对比" class="content-img">
+        <div class="img-caption">图2：不同光照条件下的水下生物分割效果对比 (Ours vs SOTA)</div>
+
+        <h2>4. 总结</h2>
+        <p>本项目通过引入 DFF 动态融合机制，有效解决了水下多模态数据质量不稳定的问题。作为团队负责人，我不仅负责了核心算法的架构设计（Pytorch实现），还协调了数据集的清洗与标注工作，最终带领团队获得了<strong>辽宁省一等奖</strong>的优异成绩。</p>
+
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Meng Xiangrui | Data Science & AI Portfolio
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, p = [];
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        class P { constructor() { this.x = Math.random() * w; this.y = Math.random() * h; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > w) this.vx *= -1; if (this.y < 0 || this.y > h) this.vy *= -1; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill(); } }
+        for (let i = 0; i < 80; i++) p.push(new P());
+        function anim() { ctx.clearRect(0, 0, w, h); p.forEach(a => { a.update(); a.draw(); }); requestAnimationFrame(anim); }
+        anim();
+    </script>
+</body>
+</html>

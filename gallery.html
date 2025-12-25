@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人风采 - 孟祥瑞</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- 全局深色变量 --- */
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --card-radius: 20px;
+            --scroll-speed: 45s; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif; 
+            background: var(--bg-deep); 
+            color: var(--text-main); 
+            overflow: hidden; /* 隐藏主页面的纵向滚动条 */
+            height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        /* 动态背景 */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); }
+
+        /* 1. 顶部导航 */
+        .nav-bar {
+            padding: 1.2rem 2rem; 
+            background: rgba(15,23,42,0.8); backdrop-filter: blur(10px); 
+            z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
+        }
+        .logo-link { color: var(--primary); text-decoration: none; font-weight: 800; font-size: 1.2rem; }
+
+        /* 顶部菜单链接样式 */
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+            position: relative; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a.active { color: var(--primary); font-weight: 700; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--primary); transition: width 0.3s;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        @media (max-width: 768px) { .nav-links { display: none; } }
+
+        /* 2. 新增：个人风采展示头部 */
+        .gallery-header {
+            text-align: center;
+            padding: 2rem 2rem 1rem;
+            flex-shrink: 0; /* 防止被压缩 */
+            position: relative;
+            z-index: 10;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .gallery-main-title {
+            font-size: 3rem; font-weight: 900; color: #fff;
+            margin-bottom: 0.5rem; letter-spacing: 3px;
+            /* 渐变文字效果 */
+            background: linear-gradient(135deg, #fff 40%, var(--primary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: inline-block;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .gallery-subtitle {
+            font-size: 1rem; color: var(--text-muted);
+            letter-spacing: 4px; text-transform: uppercase;
+            margin-top: 5px; opacity: 0.8;
+        }
+        /* 标题入场动画 */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 3. 核心：自动横向滚动容器 */
+        .gallery-viewport {
+            flex-grow: 1; /* 占据剩余空间 */
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            overflow: hidden;
+            position: relative;
+            /* 左右两侧增加黑色遮罩，聚焦中心 */
+            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            padding-bottom: 2rem; /* 底部留白 */
+        }
+
+        .gallery-track {
+            display: flex;
+            gap: 3rem;         /* 加大卡片间距，视觉更开阔 */
+            padding: 0 3rem;
+            animation: scrollLeft var(--scroll-speed) linear infinite;
+        }
+        
+        .gallery-track:hover { animation-play-state: paused; }
+
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 1.5rem)); } 
+        }
+
+        /* 4. 卡片样式 (重点美化：流光边框) */
+        .photo-card {
+            flex: 0 0 auto;
+            width: 380px; height: 58vh; max-height: 520px; /* 调整高度比例 */
+            position: relative;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            
+            /* ✅ 默认状态：磨砂质感边框 */
+            border: 2px solid rgba(255,255,255,0.08);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            /* 双重阴影：深色投影 + 微弱内发光 */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02);
+            
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .photo-card.wide { width: 650px; }
+
+        .photo-card:hover {
+            transform: scale(1.03) translateY(-8px); /* 悬停上浮放大 */
+            border-color: var(--primary); /* 边框变亮 */
+            
+            /* ✅ 悬停高光：强烈的外部青蓝光晕 + 内部色彩填充 */
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.6), /* 底部投影加深 */
+                0 0 25px rgba(56, 189, 248, 0.4), /* 外部发光 */
+                inset 0 0 15px rgba(56, 189, 248, 0.15); /* 内部微光 */
+            
+            z-index: 10;
+        }
+
+        .photo-card img {
+            width: 100%; height: 100%;
+            object-fit: contain; /* 完整显示 */
+            padding: 8px; /* 图片与边框的间距 */
+            border-radius: var(--card-radius);
+            transition: transform 0.5s;
+        }
+        .photo-card:hover img { transform: scale(1.02); }
+
+        /* 文字遮罩 */
+        .overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 2rem 1.5rem;
+            /* 更有质感的渐变黑 */
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.8) 50%, transparent 100%);
+            color: #fff;
+            opacity: 0; transform: translateY(20px); 
+            transition: all 0.3s ease-out;
+        }
+        .photo-card:hover .overlay { opacity: 1; transform: translateY(0); }
+
+        .tag { 
+            background: var(--primary); color: #0f172a; 
+            padding: 5px 12px; border-radius: 6px; 
+            font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);
+        }
+        h3 { font-size: 1.3rem; margin: 0.8rem 0 0.3rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        p { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body { overflow: auto; height: auto; }
+            .nav-bar { position: fixed; top: 0; width: 100%; }
+            .gallery-header { padding-top: 6rem; padding-bottom: 0; }
+            .gallery-main-title { font-size: 2.2rem; }
+            .gallery-viewport { mask-image: none; padding-bottom: 0; }
+            .gallery-track {
+                flex-direction: column; animation: none;
+                padding: 2rem 1.5rem 4rem; gap: 2rem;
+            }
+            .photo-card, .photo-card.wide { width: 100%; height: 450px; }
+            .photo-card:hover { transform: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); }
+            .overlay { opacity: 1; transform: translateY(0); background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="logo-link">MXR.Gallery</a>
+        <div class="nav-links">
+            <a href="index.html">主页</a>
+            <a href="projects.html">项目集</a>
+            <a href="awards.html">荣誉殿堂</a>
+            <a href="profile.html">综合素质</a>
+            <a href="gallery.html" class="active">个人风采</a>
+        </div>
+    </nav>
+
+    <div class="gallery-header">
+        <h1 class="gallery-main-title">个人风采展示</h1>
+        <p class="gallery-subtitle">记录竞赛点滴 · 定格高光时刻</p>
+    </div>
+
+    <div class="gallery-viewport">
+        <div class="gallery-track">
+            
+            <div class="photo-card">
+                <img src="images/晋级卡.png" alt="晋级卡">
+                <div class="overlay"><span class="tag">高光时刻</span><h3>全国总决赛晋级卡</h3><p>海豚杯数智应用创新大赛</p></div>
+            </div>
+            
+            <div class="photo-card wide"> 
+                <img src="images/国家一等奖.jpg" alt="荣誉证书">
+                <div class="overlay"><span class="tag">最高荣誉</span><h3>国家级一等奖证书</h3><p>团队负责人 | 孟祥瑞</p></div>
+            </div>
+
+            <div class="photo-card wide"><img src="images/2025级大数据迎新合影.jpg"><div class="overlay"><span class="tag">团队</span><h3>大数据班级合影</h3><p>2025级迎新 · 新的起点</p></div></div>
+            
+            <div class="photo-card"><img src="images/个人风采1.jpg"><div class="overlay"><span class="tag">实战</span><h3>省赛答辩现场</h3><p>卓越杯项目展示</p></div></div>
+            
+            <div class="photo-card"><img src="images/答辩细节展示.jpg"><div class="overlay"><span class="tag">技术</span><h3>核心算法讲解</h3><p>Seg2Track-SAM2 网络架构</p></div></div>
+            
+            <div class="photo-card wide"><img src="images/大海大校园美景.jpg"><div class="overlay"><span class="tag">校园</span><h3>大连海洋大学</h3><p>黄昏时的静谧一角</p></div></div>
+            
+            <div class="photo-card"><img src="images/生活照片.jpg"><div class="overlay"><span class="tag">生活</span><h3>探索未知</h3><p>水族馆的奇妙旅程</p></div></div>
+            <div class="photo-card"><img src="images/生活照—热爱美食.jpg"><div class="overlay"><span class="tag">热爱</span><h3>生活瞬间</h3><p>代码之外的烟火气</p></div></div>
+
+            <div class="photo-card"><img src="images/晋级卡.png"><div class="overlay"><span class="tag">高光时刻</span><h3>全国总决赛晋级卡</h3><p>海豚杯数智应用创新大赛</p></div></div>
+            <div class="photo-card wide"><img src="images/国家一等奖.jpg"><div class="overlay"><span class="tag">最高荣誉</span><h3>国家级一等奖证书</h3><p>团队负责人 | 孟祥瑞</p></div></div>
+            <div class="photo-card wide"><img src="images/2025级大数据迎新合影.jpg"><div class="overlay"><span class="tag">团队</span><h3>大数据班级合影</h3><p>2025级迎新 · 新的起点</p></div></div>
+            <div class="photo-card"><img src="images/个人风采1.jpg"><div class="overlay"><span class="tag">实战</span><h3>省赛答辩现场</h3><p>卓越杯项目展示</p></div></div>
+            <div class="photo-card"><img src="images/答辩细节展示.jpg"><div class="overlay"><span class="tag">技术</span><h3>核心算法讲解</h3><p>Seg2Track-SAM2 网络架构</p></div></div>
+            <div class="photo-card wide"><img src="images/大海大校园美景.jpg"><div class="overlay"><span class="tag">校园</span><h3>大连海洋大学</h3><p>黄昏时的静谧一角</p></div></div>
+            <div class="photo-card"><img src="images/生活照片.jpg"><div class="overlay"><span class="tag">生活</span><h3>探索未知</h3><p>水族馆的奇妙旅程</p></div></div>
+            <div class="photo-card"><img src="images/生活照—热爱美食.jpg"><div class="overlay"><span class="tag">热爱</span><h3>生活瞬间</h3><p>代码之外的烟火气</p></div></div>
+
+        </div>
+    </div>
+
+    <script>
+        // 粒子背景
+        const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');let w,h,p=[];const resize=()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;};window.addEventListener('resize',resize);resize();class P{constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.s=Math.random()*2;}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1;}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,6.28);ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fill();}}for(let i=0;i<80;i++)p.push(new P());function anim(){ctx.clearRect(0,0,w,h);p.forEach(a=>{a.update();a.draw();});requestAnimationFrame(anim);}anim();
+    </script>
+</body>
+</html>

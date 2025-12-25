@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>综合素质 - 孟祥瑞 | Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ============================ */
+        /* 🎨 全局样式 */
+        /* ============================ */
+        :root {
+            --bg-deep: #0f172a;
+            --primary: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            background: var(--bg-deep); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            line-height: 1.6; 
+        }
+
+        #bg-canvas { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: -1; pointer-events: none; 
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%); 
+        }
+
+        /* --- 导航栏 (优化版) --- */
+        .nav-bar {
+            padding: 1.5rem 2rem; position: fixed; width: 100%; top: 0;
+            background: rgba(15,23,42,0.95); backdrop-filter: blur(10px); z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-link {
+            font-size: 1.2rem; font-weight: 800; color: var(--primary); 
+            text-decoration: none;
+        }
+
+        /* 顶部菜单链接样式 */
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+            position: relative; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a.active { color: var(--primary); font-weight: 700; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--primary); transition: width 0.3s;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* ============================ */
+        /* 📐 页面布局 */
+        /* ============================ */
+        .container {
+            max-width: 1200px; margin: 0 auto;
+            padding: 8rem 1.5rem 4rem;
+        }
+
+        .header-section { text-align: center; margin-bottom: 4rem; }
+        .main-title { font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff; letter-spacing: 2px; }
+        .sub-title { color: var(--text-muted); font-size: 1.1rem; }
+        .highlight { color: var(--primary); text-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+        /* ============================ */
+        /* 🍱 Bento Grid - 双列布局 */
+        /* ============================ */
+        .bento-grid {
+            display: flex; 
+            gap: 24px;
+            align-items: stretch; /* 确保左右列等高 */
+        }
+
+        .col-left, .col-right {
+            flex: 1;
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            position: relative;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; /* 让卡片内部也变成弹性列 */
+        }
+        .card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--primary); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+        }
+
+        /* 让每一列的最后一个卡片（体育、志愿）自动占满剩余高度 */
+        .col-left .card:last-child,
+        .col-right .card:last-child {
+            flex-grow: 1;
+        }
+
+        .card h2 { 
+            margin-top: 0; font-size: 1.5rem; color: #fff; 
+            border-bottom: 2px solid var(--primary); 
+            display: inline-block; padding-bottom: 8px; margin-bottom: 25px; 
+        }
+        .card-icon { 
+            position: absolute; top: 25px; right: 25px; font-size: 2rem; 
+            color: rgba(255,255,255,0.05); 
+        }
+
+        /* 时间轴 */
+        .timeline-item {
+            border-left: 2px solid rgba(56, 189, 248, 0.2);
+            padding-left: 25px; margin-bottom: 30px; position: relative;
+        }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item::before {
+            content: ''; width: 12px; height: 12px; background: var(--bg-deep);
+            border: 2px solid var(--primary); border-radius: 50%;
+            position: absolute; left: -7px; top: 6px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+        .year-badge {
+            font-size: 0.8rem; color: #000; font-weight: 800; 
+            background: var(--primary); padding: 2px 10px; border-radius: 12px;
+            display: inline-block; margin-bottom: 8px;
+        }
+        .timeline-item h3 { margin: 5px 0; font-size: 1.1rem; color: #fff; }
+        .timeline-item p { margin: 5px 0 0; font-size: 0.95rem; color: var(--text-muted); text-align: justify; }
+
+        /* 座右铭卡片 */
+        .motto-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(56, 189, 248, 0.15));
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+        }
+        .motto-text {
+            font-size: 1.3rem; font-weight: 700; color: #fff; font-style: italic; margin-bottom: 0.5rem;
+            position: relative; z-index: 2; line-height: 1.4;
+        }
+        .motto-sub { 
+            font-size: 0.85rem; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; z-index: 2; 
+            opacity: 0.8;
+        }
+        .motto-bg-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 5rem; color: rgba(255,255,255,0.03); pointer-events: none; z-index: 1;
+        }
+
+        /* 标签 (体育) */
+        .tags-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .tag { 
+            background: rgba(255,255,255,0.05); padding: 5px 12px; 
+            border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--glass-border); 
+            color: var(--text-muted); transition: 0.3s;
+        }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* 体育图片 */
+        .sports-img-container { 
+            flex: 1; /* 让图片容器自动填满剩余空间 */
+            width: 100%;
+            min-height: 250px; /* 最小高度 */
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+        .sports-img-container img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+        .sports-img-container:hover img { transform: scale(1.05); }
+
+        /* 志愿服务图片样式 */
+        .volunteer-grid-imgs {
+            display: flex; 
+            flex-direction: column; /* 上下排列 */
+            gap: 15px; 
+            flex: 1; 
+            margin-top: 20px;
+            min-height: 300px; 
+        }
+
+        .vol-img-box { 
+            flex: 1; 
+            width: 100%;
+            border-radius: 8px; 
+            overflow: hidden; 
+            border: 1px solid var(--glass-border); 
+        }
+
+        .vol-img-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s; 
+        }
+        .vol-img-box:hover img { transform: scale(1.1); }
+
+        .list-check { list-style: none; padding: 0; margin-bottom: 10px; }
+        .list-check li { margin-bottom: 12px; padding-left: 25px; position: relative; color: var(--text-muted); font-size: 0.95rem; }
+        .list-check li::before { 
+            content: '\f004'; font-family: 'Font Awesome 6 Free'; font-weight: 900; 
+            color: #ef4444; position: absolute; left: 0; top: 3px; 
+        }
+        .list-check strong { color: #fff; margin-right: 5px; }
+
+        /* 奖项列表样式 */
+        .award-list p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .award-list i { color: #f59e0b; }
+
+        /* 视频样式 */
+        .arts-card { grid-column: 1 / -1; margin-top: 24px; }
+        .arts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .arts-sub { color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+        
+        .video-wrapper { 
+            width: 100%; max-width: 800px; margin: 0 auto; 
+            background: #000; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+            margin-top: auto;
+        }
+        video { width: 100%; display: block; }
+
+        footer { text-align: center; margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--glass-border); color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .bento-grid { flex-direction: column; }
+            .col-left, .col-right { flex: auto; }
+            .main-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="logo-link">MXR.Profile</a>
+        <div class="nav-links">
+            <a href="index.html">主页</a>
+            <a href="projects.html">项目集</a>
+            <a href="awards.html">荣誉殿堂</a>
+            <a href="profile.html" class="active">综合素质</a>
+            <a href="gallery.html">个人风采</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="header-section">
+            <h1 class="main-title">综合素质展示</h1>
+            <p class="sub-title">德 · 智 · 体 · 美 · 劳 —— <span class="highlight">多元化发展的六边形战士</span></p>
+        </div>
+
+        <div class="bento-grid">
+            
+            <div class="col-left">
+                
+                <div class="card leadership-card">
+                    <div class="card-icon"><i class="fas fa-user-tie"></i></div>
+                    <h2>👮‍♂️ 核心任职 & 领导力</h2>
+                    <div class="timeline-content">
+                        <div class="timeline-item">
+                            <span class="year-badge">2025.09 - 2026.06</span>
+                            <h3>创新创业联合会 | 项目部副部长</h3>
+                            <p>承办农业经济建模大赛，统筹组织与多方协调，确保赛事顺利进行。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="year-badge">2025.09 - 2026.06</span>
+                            <h3>大数据25级2班 | 新生班导师助理</h3>
+                            <p>协助班导师开展班级建设，作为新生与学校的桥梁，引领新生快速适应大学生活节奏。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="year-badge">2024.09 - 至今</span>
+                            <h3>信息工程学院 | 团委办公室干事</h3>
+                            <p>策划并组织“第二课堂”相关活动，负责管理维护“智慧团建”系统。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="year-badge">2024.09 - 至今</span>
+                            <h3>信息工程学院 | 办公室学生助理</h3>
+                            <p>协助教务及行政老师处理日常办公事务，熟练处理文件流转与档案整理。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card sports-card">
+                    <div class="card-icon"><i class="fas fa-running"></i></div>
+                    <h2>🏃‍♂️ 体育特长</h2>
+                    <div class="tags-container">
+                        <span class="tag">🏓 乒乓球</span>
+                        <span class="tag">🏸 羽毛球</span>
+                        <span class="tag">🏐 排球</span>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <p style="color:var(--text-main); font-weight:bold; margin-bottom:8px;">
+                            “文明其精神，野蛮其体魄。”
+                        </p>
+                        <p style="color:var(--text-muted); font-size:0.95rem; text-align: justify; line-height: 1.7;">
+                            体育不仅仅是强健身体，更是意志的磨练。在挥洒汗水的过程中，我深刻体会到了“坚持”的力量。无论是羽毛球场上的每一次扣杀，还是排球场上的默契配合，都让我学会了在压力下保持冷静。
+                        </p>
+                        
+                        <div class="award-list" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--glass-border);">
+                            <p><i class="fas fa-trophy"></i> 2024年 校运动会“精神文明奖”</p>
+                            <p><i class="fas fa-medal"></i> 2023年 “迎新杯” 羽毛球团体赛亚军</p>
+                        </div>
+                    </div>
+
+                    <div class="sports-img-container">
+                        <img src="images/体育活动.jpg" alt="体育活动照片">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-right">
+                
+                <div class="card motto-card">
+                    <i class="fas fa-quote-right motto-bg-icon"></i>
+                    <p class="motto-text">“ 知不足而奋进，望远山而前行。”</p>
+                    <span class="motto-sub">Stay Hungry, Stay Foolish</span>
+                </div>
+
+                <div class="card volunteer-card">
+                    <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h2>❤️ 志愿服务</h2>
+                    <ul class="list-check">
+                        <li><strong>少儿图书馆:</strong> 整理书籍分类，维护阅读秩序。</li>
+                        <li><strong>黑石礁公园:</strong> 参与海滩净滩活动，保护环境。</li>
+                    </ul>
+                    
+                    <div style="margin: 20px 0; border-top: 1px dashed var(--glass-border); padding-top: 20px;">
+                        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 10px;">🌟 服务感悟</h3>
+                        <p style="color:var(--text-muted); font-size:0.95rem; line-height: 1.8; text-align: justify;">
+                            “赠人玫瑰，手有余香。” 志愿服务不仅是一份责任，更是一种修行。
+                            <br><br>
+                            走出校园，投身社会实践，让我看到了书本之外的世界。在图书馆的静谧中，我学会了细致与耐心；在海滩的烈日下，我体会到了环保的紧迫与不易。这些经历让我明白，大学生的价值不仅在于学术成绩，更在于服务社会、回馈大众的热忱与行动力。我愿尽绵薄之力，传递温暖与光亮。
+                        </p>
+                    </div>
+
+                    <div class="volunteer-grid-imgs">
+                        <div class="vol-img-box">
+                            <img src="images/图书馆志愿.jpg" alt="少儿图书馆志愿服务">
+                        </div>
+                        <div class="vol-img-box">
+                            <img src="images/净滩志愿.jpg" alt="黑石礁净滩志愿服务">
+                        </div>
+                    </div>
+                </div>
+
+            </div> 
+
+        </div> 
+        
+        <div class="card arts-card">
+            <div class="arts-header">
+                <h2 style="margin:0; border:none;">🎸 文艺特长：吉他弹唱</h2>
+                <span class="arts-sub"><i class="fas fa-music"></i> Music is my sanctuary</span>
+            </div>
+            <div class="video-wrapper">
+                <video controls>
+                    <source src="videos/吉他弹唱.mp4" type="video/mp4">
+                    您的浏览器不支持视频播放。
+                </video>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Meng Xiangrui. Dalian Ocean University.</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const particles = [];
+
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width; this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.x = (this.x + width) % width;
+                this.y = (this.y + height) % height;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill();
+            }
+        }
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
